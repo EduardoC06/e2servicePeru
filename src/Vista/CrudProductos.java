@@ -1,9 +1,9 @@
-
 package Vista;
 
 import Clases.producto;
 import Clases.usuario;
 import DAO.DAOGestionProductos;
+import DAO.DAOSesion;
 import Interface.Productos;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,9 +15,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class CrudProductos extends javax.swing.JFrame {
+
     //DAOGestionProductos daoP = new DAOGestionProductos(); 
     Productos daoP = new DAOGestionProductos();
-    
+
     List<producto> Lista = new LinkedList();
     String[] Cabecera = {"idProducto", "nombre", "descripcion", "precio", "stock"};
     DefaultTableModel DTM;
@@ -25,6 +26,7 @@ public class CrudProductos extends javax.swing.JFrame {
     int id_productoSelec;
     usuario usuario;
     String T;
+
     public CrudProductos(usuario u, String T) {
         initComponents();
         setLocationRelativeTo(null);
@@ -327,25 +329,51 @@ public class CrudProductos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtBuscarMouseClicked
-       txtBuscar.setText("");
+        txtBuscar.setText("");
     }//GEN-LAST:event_txtBuscarMouseClicked
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-       daoP.agregarProducto(txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()) , Integer.parseInt(txtStock.getText()) );
-       ObtenerProductos();
-       Limpiartxt();
+        if (daoP.comprobarToken(T)) {
+            daoP.agregarProducto(txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
+            ObtenerProductos();
+            Limpiartxt();
+        } else {
+            JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
+            DAOSesion DAOs = new DAOSesion();
+            DAOs.setToken(null);
+            new Login().setVisible(true);
+            dispose();
+        }
+
+
     }//GEN-LAST:event_AgregarActionPerformed
 
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
-        daoP.actualizarProducto(id_productoSelec ,txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()) , Integer.parseInt(txtStock.getText()));
+        if (daoP.comprobarToken(T)) {
+        daoP.actualizarProducto(id_productoSelec, txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
         ObtenerProductos();
         Limpiartxt();
+        } else {
+            JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
+            DAOSesion DAOs = new DAOSesion();
+            DAOs.setToken(null);
+            new Login().setVisible(true);
+            dispose();
+        }
     }//GEN-LAST:event_ActualizarActionPerformed
 
     private void borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarActionPerformed
-        //daoP.BorrarProducto(id_productoSelec);
+        if (daoP.comprobarToken(T)) {
+        daoP.BorrarProducto(id_productoSelec);
         ObtenerProductos();
         Limpiartxt();
+        } else {
+            JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
+            DAOSesion DAOs = new DAOSesion();
+            DAOs.setToken(null);
+            new Login().setVisible(true);
+            dispose();
+        }
     }//GEN-LAST:event_borrarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
@@ -353,8 +381,8 @@ public class CrudProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void regresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_regresarMouseClicked
-       new frmMenuP(usuario, T).setVisible(true);
-       dispose();
+        new frmMenuP(usuario, T).setVisible(true);
+        dispose();
     }//GEN-LAST:event_regresarMouseClicked
 
 //    public static void main(String args[]) {
@@ -431,13 +459,13 @@ public class CrudProductos extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No se puede mostrar");
         }
     }
-    
-    public void Configuracion() {        
+
+    public void Configuracion() {
         TablaProductos.getColumnModel().getColumn(0).setMaxWidth(0);
         TablaProductos.getColumnModel().getColumn(0).setMinWidth(0);
-        TablaProductos.getColumnModel().getColumn(0).setPreferredWidth(0);        
+        TablaProductos.getColumnModel().getColumn(0).setPreferredWidth(0);
     }
-    
+
     public void agregarEventoSeleccionTabla() { //Evento al presionar muestra los datos del producto en los inputtxt
         TablaProductos.addMouseListener(new MouseAdapter() {
             @Override
@@ -449,15 +477,15 @@ public class CrudProductos extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void Limpiartxt(){
+
+    public void Limpiartxt() {
         id_productoSelec = 0;
         txtNombre.setText("");
         txtDes.setText("");
         txtPrecio.setText("");
         txtStock.setText("");
     }
-    
+
     private void mostrarProductoS(int filaSeleccionada) {
         id_productoSelec = (int) TablaProductos.getValueAt(filaSeleccionada, 0);
         txtNombre.setText(TablaProductos.getValueAt(filaSeleccionada, 1).toString());
@@ -465,7 +493,7 @@ public class CrudProductos extends javax.swing.JFrame {
         txtPrecio.setText(TablaProductos.getValueAt(filaSeleccionada, 3).toString());
         txtStock.setText(TablaProductos.getValueAt(filaSeleccionada, 4).toString());
     }
-    
+
     private void Filtrar() {
         try {
             String Texto = txtBuscar.getText();

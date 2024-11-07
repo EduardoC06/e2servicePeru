@@ -8,10 +8,10 @@ import DAO.DAOSesion;
 
 public class Login extends javax.swing.JFrame {
     
-    String token;
-    public Login(String token) {
+    //String token;
+    public Login() { //String token
         initComponents();
-        this.token = token;
+        //this.token = token;
         setLocationRelativeTo(null);
     }
 
@@ -114,11 +114,10 @@ public class Login extends javax.swing.JFrame {
         usuario user = new usuario();
         DAOSesion DAOs = new DAOSesion();
         
-        System.out.println("Usuario: " + usuario + " pass: " + contraseña);
         user.setUusuario(usuario);
         user.setPassword(contraseña);
         boolean estado = DAOs.login(user);  
-        token = DAOs.getToken();
+        //token = DAOs.getToken();
         if(estado){
             new frmMenuP(user, DAOs.getToken()).setVisible(true);
             dispose();
@@ -159,7 +158,7 @@ public class Login extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login(null).setVisible(true);
+                new Login().setVisible(true);
             }
         });
     }

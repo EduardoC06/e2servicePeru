@@ -21,6 +21,10 @@ public class DAOSesion {
         return token; // Método para obtener el token
     }
     
+    public String setToken(String Token){
+        return token = Token;
+    }
+    
 //    public static String encriptarPassword(String password) {
 //        try {
 //            MessageDigest md = MessageDigest.getInstance("SHA-256");

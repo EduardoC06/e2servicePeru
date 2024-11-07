@@ -146,7 +146,9 @@ public class frmMenuP extends javax.swing.JFrame {
 
     private void CerrarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CerrarSesionMouseClicked
         String token = null;
-        new Login(token).setVisible(true);
+        DAOSesion DAOs = new DAOSesion();
+        DAOs.setToken(token);
+        new Login().setVisible(true);
         dispose();
     }//GEN-LAST:event_CerrarSesionMouseClicked
 

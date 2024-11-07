@@ -155,7 +155,7 @@ public class DAOGestionProductos implements Productos {
         LinkedList<producto> listaP = new LinkedList<>();
 
         try {
-            String urlString = "http://localhost/API-PROYECTOI/Productos.php";
+            String urlString = "http://localhost/API-PROYECTOI/ObtenerProductos.php";
             URL url = new URL(urlString);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -317,9 +317,40 @@ public class DAOGestionProductos implements Productos {
     }
 
     @Override
-    public boolean BorrarProducto(int idusuario, int idProducto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean BorrarProducto(int idProducto) { //int usuario
+        boolean resultado = false;
+
+        try {
+            String urlString = "http://localhost/API-PROYECTOI/BorrarProducto.php";
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            JSONObject producto = new JSONObject();
+            producto.put("id_producto", idProducto);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = producto.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                resultado = true;
+            } else {
+                System.out.println("Error al borrar el producto" + responseCode);
+            }
+
+            conn.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return resultado;
     }
-    
-    
+
 }
