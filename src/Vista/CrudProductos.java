@@ -375,7 +375,6 @@ public class CrudProductos extends javax.swing.JFrame {
             dispose();
         }
         
-        //Se hizo el commit?
     }//GEN-LAST:event_borrarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
