@@ -3,12 +3,16 @@ package DAO;
 import Clases.cliente;
 import Clases.comprobante;
 import Clases.detalleComprobante;
+import Clases.producto;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.json.JSONArray;
@@ -91,5 +95,54 @@ public class DAOVenta {
 
         return resultado;
     }
+    
+    public LinkedList<producto> obtenerProductos() {
+        LinkedList<producto> listaP = new LinkedList<>();
 
+        try {
+            String urlString = "http://localhost/API-PROYECTOI/ObtenerProductos.php";
+            URL url = new URL(urlString);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+
+            in.close();
+            conn.disconnect();
+
+            JSONObject jsonResponse = new JSONObject(content.toString());
+
+            if (jsonResponse.getBoolean("success")) {
+                JSONArray productosArray = jsonResponse.getJSONArray("productos");
+
+                for (int i = 0; i < productosArray.length(); i++) {
+                    JSONObject productoJSON = productosArray.getJSONObject(i);
+
+                    producto producto = new producto(
+                            productoJSON.getInt("id_producto"),
+                            productoJSON.getString("nombre"),
+                            productoJSON.getString("descripcion"),
+                            productoJSON.getDouble("precio"),
+                            productoJSON.getInt("stock")
+                    );
+
+                    listaP.add(producto);
+                }
+            } else {
+                System.out.println("No se encontraron productos: " + jsonResponse.getString("message"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return listaP;
+    }
 }

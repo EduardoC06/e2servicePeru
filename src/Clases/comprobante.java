@@ -31,6 +31,15 @@ public class comprobante {
         this.cliente = cliente;
     }
 
+    public comprobante(int id_usuario, Date fecha, float igv, float total, List<detalleComprobante> detalles, cliente cliente) {
+        this.id_usuario = id_usuario;
+        this.fecha = fecha;
+        this.igv = igv;
+        this.total = total;
+        this.detalles = detalles;
+        this.cliente = cliente;
+    }
+
     public comprobante(int id_usuario, int id_cliente, Date fecha, float igv, float total, List<detalleComprobante> detalles, cliente cliente) {
         this.id_usuario = id_usuario;
         this.id_cliente = id_cliente;

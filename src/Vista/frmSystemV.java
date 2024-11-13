@@ -4,18 +4,37 @@ import Clases.cliente;
 import Clases.comprobante;
 import Clases.datosEmpresa;
 import Clases.detalleComprobante;
+import Clases.producto;
+import Clases.usuario;
 import DAO.DAODatosEmpresa;
 import DAO.DAOVenta;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class frmSystemV extends javax.swing.JFrame {
 
-    public frmSystemV() {
+    List<producto> Lista = new LinkedList();
+    String[] Cabecera = {"idProducto", "nombre", "descripcion", "precio", "stock"};
+    DefaultTableModel DTM;
+    TableRowSorter<DefaultTableModel> Filtro;
+    int id_productoSelec;
+    float precioUnitario;
+    usuario u;
+    DAOVenta daov = new DAOVenta();
+
+    public frmSystemV(usuario u) {
         initComponents();
         setLocationRelativeTo(null);
-        
+        obtenerProducto();
+        this.u = u;
+        agregarEventoSeleccionTabla();
     }
 
     /**
@@ -59,13 +78,13 @@ public class frmSystemV extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         txtDireccion = new javax.swing.JTextField();
-        jTextField13 = new javax.swing.JTextField();
+        txtCantidad = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
+        lbSubtotal = new javax.swing.JLabel();
+        lbIGV = new javax.swing.JLabel();
+        lbTotal = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         txtCorreo = new javax.swing.JTextField();
@@ -253,7 +272,12 @@ public class frmSystemV extends javax.swing.JFrame {
             }
         });
 
-        jTextField13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        txtCantidad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        txtCantidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCantidadKeyReleased(evt);
+            }
+        });
 
         jLabel17.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         jLabel17.setText("SUBTOTAL");
@@ -264,11 +288,11 @@ public class frmSystemV extends javax.swing.JFrame {
         jLabel19.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         jLabel19.setText("TOTAL");
 
-        jLabel20.setText("0");
+        lbSubtotal.setText("0");
 
-        jLabel21.setText("0");
+        lbIGV.setText("0");
 
-        jLabel22.setText("0");
+        lbTotal.setText("0");
 
         jButton1.setBackground(new java.awt.Color(18, 39, 112));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
@@ -355,9 +379,9 @@ public class frmSystemV extends javax.swing.JFrame {
                                         .addComponent(jLabel18))
                                     .addGap(18, 18, 18)
                                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(lbSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lbIGV, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGroup(jPanel4Layout.createSequentialGroup()
                                     .addGap(22, 22, 22)
                                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -366,7 +390,7 @@ public class frmSystemV extends javax.swing.JFrame {
                             .addComponent(jButton2)
                             .addContainerGap())
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                            .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addContainerGap()))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -405,20 +429,20 @@ public class frmSystemV extends javax.swing.JFrame {
                     .addComponent(jLabel23))
                 .addGap(2, 2, 2)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
-                    .addComponent(jLabel20))
+                    .addComponent(lbSubtotal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
-                    .addComponent(jLabel21))
+                    .addComponent(lbIGV))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
-                    .addComponent(jLabel22))
+                    .addComponent(lbTotal))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -504,7 +528,7 @@ public class frmSystemV extends javax.swing.JFrame {
     }//GEN-LAST:event_txtRucKeyReleased
 
     private void txtBuscarProductoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarProductoKeyReleased
-        //Filtrar();
+        Filtrar();
     }//GEN-LAST:event_txtBuscarProductoKeyReleased
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -531,37 +555,32 @@ public class frmSystemV extends javax.swing.JFrame {
         AgregarC();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtCantidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadKeyReleased
+        MostrarPrecio();
+    }//GEN-LAST:event_txtCantidadKeyReleased
+
     public void AgregarC() {
         DAOVenta daov = new DAOVenta();
-        Date COFechaP = new Date(); 
+        Date COFechaP = new Date();
 
-        // Obtener datos de los campos de texto en el formulario
-        String nombreProducto = txtNombreP.getText();
-        String descripcionProducto = txtDescripcionP.getText();
-        int stockProducto = 1;
-        float precioU = 50;
-
-        // Valores fijos o calculados para el comprobante
-        int idCliente = 1; // Ejemplo: id del cliente
-        int idUsuario = 1; // Ejemplo: id del trabajador/usuario
-        float COIGV = 18.0f; // Ejemplo de IGV
-        float COTotal = calcularTotal(precioU, stockProducto, COIGV); // Calcula el total en función del IGV y cantidad
-
-        // Crear detalles de comprobante
-        detalleComprobante detalle1 = new detalleComprobante(2, 20, precioU, 100.0f);
-        List<detalleComprobante> detalles = List.of(detalle1); // Crear lista de detalles (aquí solo con un ejemplo)
-        
-        //Obtener datos de cliente
+        //Agregar datos del producto
         cliente cl = new cliente(txtDni.getText(), txtRuc.getText(), txtNombre.getText(), txtDireccion.getText(), txtTelefono.getText(), txtCorreo.getText());
-        // Crear objeto comprobante con la lista de detalles
+
+        //Agregar datos de detalle comprobobante
+        float subtotal = cacularSubtotal(Float.parseFloat(txtPrecioUP.getText()), Integer.parseInt(txtCantidad.getText()));
         
-        comprobante cm = new comprobante(idCliente, idUsuario, COFechaP, COIGV, COTotal, detalles, cl);
-        
-               
-        // Enviar el comprobante a la API a través del método Comprobante de DAOVenta
+        //lbSubtotal.setText(String.valueOf(subtotal));
+        detalleComprobante detalle1 = new detalleComprobante(id_productoSelec, Integer.parseInt(txtCantidad.getText()), Float.parseFloat(txtPrecioUP.getText()), subtotal);
+        List<detalleComprobante> detalles = List.of(detalle1); // Crear lista de detalles (aquí solo con un ejemplo)
+
+        //Agregar datos de comprobante
+        float COIGV = 18.0f;
+        float COTotal = calcularTotal(subtotal, COIGV);
+        //lbIGV.setText(String.valueOf(COIGV));
+        comprobante cm = new comprobante(u.getUCdusuario(), COFechaP, COIGV, COTotal, detalles, cl);
+
         boolean resultado = daov.Comprobante(cm);
 
-        // Mostrar mensaje de confirmación o error
         if (resultado) {
             JOptionPane.showMessageDialog(null, "Comprobante agregado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -570,11 +589,39 @@ public class frmSystemV extends javax.swing.JFrame {
     }
 
 // Método auxiliar para calcular el total con IGV incluido
-    private float calcularTotal(float precioUnitario, int cantidad, float igv) {
-        float subtotal = precioUnitario * cantidad;
+    private float calcularTotal(float subtotal, float igv) {
         return subtotal + (subtotal * (igv / 100));
     }
 
+    private float cacularSubtotal(float precioU, int cantidad) {
+        return precioU * cantidad;
+    }
+
+    private void MostrarPrecio() {
+        try {
+            // Obtiene el precio unitario del campo txtPrecioUP y la cantidad del campo txtCantidad
+            float precioU = Float.parseFloat(txtPrecioUP.getText());
+            int cantidad = Integer.parseInt(txtCantidad.getText());
+
+            // Calcula el subtotal en base al precio unitario y cantidad
+            float subtotal = cacularSubtotal(precioU, cantidad);
+
+            // Calcula el total incluyendo el IGV (impuesto general a las ventas)
+            float igv = 18.0f; // Asumimos un IGV del 18%
+            float total = calcularTotal(subtotal, igv);
+
+            // Muestra los valores en las etiquetas correspondientes
+            lbSubtotal.setText(String.format("%.2f", subtotal));
+            lbIGV.setText(String.format("%.2f", subtotal * (igv / 100)));
+            lbTotal.setText(String.format("%.2f", total));
+
+        } catch (NumberFormatException e) {
+            // Manejamos el caso en que los campos de cantidad o precio unitario estén vacíos o no sean numéricos
+            lbSubtotal.setText("0.00");
+            lbIGV.setText("0.00");
+            lbTotal.setText("0.00");
+        }
+    }
 //    public static void main(String args[]) {
 //        /* Set the Nimbus look and feel */
 //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -622,9 +669,6 @@ public class frmSystemV extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -638,10 +682,13 @@ public class frmSystemV extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField13;
+    private javax.swing.JLabel lbIGV;
+    private javax.swing.JLabel lbSubtotal;
+    private javax.swing.JLabel lbTotal;
     private javax.swing.JTable tablaProductos;
     private javax.swing.JTextField txtApellidos;
     private javax.swing.JTextField txtBuscarProducto;
+    private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtCategoriaP;
     private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextField txtDescripcionP;
@@ -654,4 +701,66 @@ public class frmSystemV extends javax.swing.JFrame {
     private javax.swing.JTextField txtStockP;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
+
+    private void obtenerProducto() {
+        try {
+            Lista = daov.obtenerProductos();
+            DTM = new DefaultTableModel(null, Cabecera);
+            for (producto C : Lista) {
+                DTM.addRow(C.Convertir());
+
+            }
+            tablaProductos.setModel(DTM);
+
+            Filtro = new TableRowSorter(DTM); //necesario para filtrar
+            tablaProductos.setRowSorter(Filtro);  //necesario para filtrar
+
+            Configuracion();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "No se puede mostrar");
+        }
+    }
+
+    public void Configuracion() {
+        tablaProductos.getColumnModel().getColumn(0).setMaxWidth(0);
+        tablaProductos.getColumnModel().getColumn(0).setMinWidth(0);
+        tablaProductos.getColumnModel().getColumn(0).setPreferredWidth(0);
+    }
+
+    public void agregarEventoSeleccionTabla() { //Evento al presionar muestra los datos del producto en los inputtxt
+        tablaProductos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int filaSeleccionada = tablaProductos.rowAtPoint(e.getPoint());
+                if (filaSeleccionada != -1) {
+                    mostrarProductoS(filaSeleccionada);
+                }
+            }
+        });
+    }
+
+    public void Limpiartxt() {
+//        id_productoSelec = 0;
+//        txtNombre.setText("");
+//        txtDes.setText("");
+//        txtPrecio.setText("");
+//        txtStock.setText("");
+    }
+
+    private void mostrarProductoS(int filaSeleccionada) {
+        id_productoSelec = (int) tablaProductos.getValueAt(filaSeleccionada, 0);
+        txtNombreP.setText(tablaProductos.getValueAt(filaSeleccionada, 1).toString());
+        txtDescripcionP.setText(tablaProductos.getValueAt(filaSeleccionada, 2).toString());
+        txtPrecioUP.setText(tablaProductos.getValueAt(filaSeleccionada, 3).toString());
+        txtStockP.setText(tablaProductos.getValueAt(filaSeleccionada, 4).toString());
+        MostrarPrecio();
+    }
+
+    private void Filtrar() {
+        try {
+            String Texto = txtBuscarProducto.getText();
+            Filtro.setRowFilter(RowFilter.regexFilter(Texto, 1));
+        } catch (Exception e) {
+        }
+    }
 }
