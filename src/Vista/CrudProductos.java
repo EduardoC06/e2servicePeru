@@ -18,7 +18,6 @@ public class CrudProductos extends javax.swing.JFrame {
 
     //DAOGestionProductos daoP = new DAOGestionProductos(); 
     Productos daoP = new DAOGestionProductos();
-
     List<producto> Lista = new LinkedList();
     String[] Cabecera = {"idProducto", "nombre", "descripcion", "precio", "stock"};
     DefaultTableModel DTM;
@@ -333,26 +332,56 @@ public class CrudProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtBuscarMouseClicked
 
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-        if (daoP.comprobarToken(T)) {
-            daoP.agregarProducto(txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
-            ObtenerProductos();
-            Limpiartxt();
-        } else {
-            JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
-            DAOSesion DAOs = new DAOSesion();
-            DAOs.setToken(null);
-            new Login().setVisible(true);
-            dispose();
+        String[] opcioness = {"Stock", "Producto"};
+        int respuesta = JOptionPane.showOptionDialog(this, "¿Qué desea hacer?", "Agregar", JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opcioness,
+                opcioness[0]
+        );
+
+        switch (respuesta) {
+            case 0:
+                if (daoP.comprobarToken(T)) {
+                    if (!txtStock.getText().isEmpty() && txtStock.getText().matches("\\d+")) {
+                        int stock = Integer.parseInt(txtStock.getText());                        
+                        daoP.actualizarStock(id_productoSelec, "entrada", stock, usuario.getUCdusuario(), "ninguna");
+                        ObtenerProductos();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido en el campo Stock");
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
+                    DAOSesion DAOs = new DAOSesion();
+                    DAOs.setToken(null);
+                    new Login().setVisible(true);
+                    dispose();
+                }
+                break;
+            case 1:
+                if (daoP.comprobarToken(T)) {
+                    daoP.agregarProducto(txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
+                    ObtenerProductos();
+                    Limpiartxt();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
+                    DAOSesion DAOs = new DAOSesion();
+                    DAOs.setToken(null);
+                    new Login().setVisible(true);
+                    dispose();
+                }
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Numero invalido");
         }
-
-
     }//GEN-LAST:event_AgregarActionPerformed
 
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
         if (daoP.comprobarToken(T)) {
-        daoP.actualizarProducto(id_productoSelec, txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
-        ObtenerProductos();
-        Limpiartxt();
+            daoP.actualizarProducto(id_productoSelec, txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
+            ObtenerProductos();
+            Limpiartxt();
         } else {
             JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
             DAOSesion DAOs = new DAOSesion();
@@ -364,9 +393,9 @@ public class CrudProductos extends javax.swing.JFrame {
 
     private void borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarActionPerformed
         if (daoP.comprobarToken(T)) {
-        daoP.BorrarProducto(id_productoSelec);
-        ObtenerProductos();
-        Limpiartxt();
+            daoP.BorrarProducto(id_productoSelec);
+            ObtenerProductos();
+            Limpiartxt();
         } else {
             JOptionPane.showMessageDialog(null, "Inicia sesion de nuevo");
             DAOSesion DAOs = new DAOSesion();
@@ -374,7 +403,7 @@ public class CrudProductos extends javax.swing.JFrame {
             new Login().setVisible(true);
             dispose();
         }
-        
+
     }//GEN-LAST:event_borrarActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased

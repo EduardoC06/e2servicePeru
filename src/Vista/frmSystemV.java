@@ -552,6 +552,8 @@ public class frmSystemV extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        
         AgregarC();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -578,14 +580,15 @@ public class frmSystemV extends javax.swing.JFrame {
         float COTotal = calcularTotal(subtotal, COIGV);
         //lbIGV.setText(String.valueOf(COIGV));
         comprobante cm = new comprobante(u.getUCdusuario(), COFechaP, COIGV, COTotal, detalles, cl);
+        new frmPago(cm, u).setVisible(true);
+        
+        //boolean resultado = daov.Comprobante(cm);
 
-        boolean resultado = daov.Comprobante(cm);
-
-        if (resultado) {
-            JOptionPane.showMessageDialog(null, "Comprobante agregado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(null, "Error al agregar comprobante", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+//        if (resultado) {
+//            JOptionPane.showMessageDialog(null, "Comprobante agregado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+//        } else {
+//            JOptionPane.showMessageDialog(null, "Error al agregar comprobante", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
     }
 
 // Método auxiliar para calcular el total con IGV incluido

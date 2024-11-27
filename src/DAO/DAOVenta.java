@@ -3,6 +3,7 @@ package DAO;
 import Clases.cliente;
 import Clases.comprobante;
 import Clases.detalleComprobante;
+import Clases.pago;
 import Clases.producto;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,12 +20,12 @@ import org.json.JSONArray;
 
 public class DAOVenta {
 
-    public boolean Comprobante(comprobante cm) {
+    public boolean Comprobante(comprobante cm, pago pg) {
         boolean resultado = false;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             // URL de la API para agregar comprobantes
-            String urlString = "http://localhost/API-PROYECTOI/Venta.php";
+            String urlString = "http://localhost/API-PROYECTOI/SistemaVenta.php";
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -66,7 +67,11 @@ public class DAOVenta {
 
             // Añadir el array de detalles al JSON de comprobante
             comprobanteJson.put("detalles", detallesArray);
-
+            
+            //Añadir compra
+            comprobanteJson.put("tipo", pg.getTipo());
+            comprobanteJson.put("descripcion", pg.getDescripcion());
+            
             // Enviar los datos a la API
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = comprobanteJson.toString().getBytes("utf-8");
@@ -96,6 +101,13 @@ public class DAOVenta {
         return resultado;
     }
     
+    public boolean realizarPago(){
+        
+        
+        //Comprobante(cm);
+        
+        return false;
+    }
     public LinkedList<producto> obtenerProductos() {
         LinkedList<producto> listaP = new LinkedList<>();
 

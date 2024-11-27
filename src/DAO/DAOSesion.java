@@ -131,7 +131,6 @@ VALUES ('Daniel', 'Martin', 'Chavez', 'Daniel124USFD@email.com', SHA2('Daniel', 
                 JSONObject userJson = responseJson.getJSONObject("user");
                 // Almacenar el token
                 token = responseJson.getString("token"); // Almacenar el token JWT
-
                 // Almacenar los datos del usuario en el objeto 'usuario'
                 user.setUCdusuario(userJson.getInt("id"));
                 user.setUusuario(userJson.getString("usuario"));

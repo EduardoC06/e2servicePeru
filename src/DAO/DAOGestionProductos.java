@@ -242,6 +242,71 @@ public class DAOGestionProductos implements Productos {
     }
 
     @Override
+    public boolean actualizarStock(int idProducto, String movimiento, int cantidad, int id_usuario, String observaciones) {
+        boolean resultado = false;
+
+        try {
+            String urlString = "http://localhost/API-PROYECTOI/gsappJava/Kardex.php";
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            // Crear JSON para enviar al servidor
+            JSONObject producto = new JSONObject();
+            producto.put("id_producto", idProducto);
+            producto.put("tipo_movimiento", movimiento);
+            producto.put("cantidad", cantidad);
+            producto.put("id_usuario", id_usuario);
+            producto.put("observaciones", observaciones);
+
+            // Enviar el JSON al servidor
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = producto.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Leer la respuesta del servidor
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
+                    StringBuilder response = new StringBuilder();
+                    String responseLine;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+
+                    // Procesar la respuesta como JSON
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+                    if (jsonResponse.getBoolean("success")) {
+                        resultado = true; // Operación exitosa
+                    } else {
+                        // Mostrar mensaje de error del servidor
+                        System.err.println(jsonResponse.getString("message"));
+                        JOptionPane.showMessageDialog(null, jsonResponse.getString("message"), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                {
+                    System.err.println("Error de conexión: Código de respuesta " + responseCode);
+                    JOptionPane.showMessageDialog(null, "Error de conexión: Código de respuesta " + responseCode, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error al procesar la solicitud: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al procesar la solicitud: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return resultado;
+    }
+
+    @Override
     public boolean actualizarProducto(int idProducto, String nombre, String descripcion, double precio, int stock) {
         boolean resultado = false;
 
