@@ -1,4 +1,3 @@
-
 package Vista;
 
 import Clases.usuario;
@@ -9,6 +8,7 @@ public class frmMenuP extends javax.swing.JFrame {
 
     usuario u;
     String Token = null;
+
     public frmMenuP(usuario user, String Token) {
         initComponents();
         setLocationRelativeTo(null);
@@ -18,7 +18,6 @@ public class frmMenuP extends javax.swing.JFrame {
         System.out.println(Token);
     }
 
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -127,10 +126,10 @@ public class frmMenuP extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(u.getNivel()==1){
-        new CrudProductos(u, Token).setVisible(true);
-        dispose();
-        } else 
+        if (u.getNivel() == 1) {
+            new CrudProductos(u, Token).setVisible(true);
+            dispose();
+        } else
             JOptionPane.showMessageDialog(null, "No tienes el permiso para acceder");
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -140,8 +139,10 @@ public class frmMenuP extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        new frmReporte().setVisible(true);
-        dispose();
+        if (u.getNivel() == 1 || u.getNivel() == 2) {
+            new frmReporte(u, Token).setVisible(true);
+            dispose();
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void CerrarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CerrarSesionMouseClicked
@@ -152,7 +153,6 @@ public class frmMenuP extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_CerrarSesionMouseClicked
 
-    
 //    public static void main(String args[]) {
 //        /* Set the Nimbus look and feel */
 //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
