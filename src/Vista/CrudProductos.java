@@ -22,6 +22,7 @@ public class CrudProductos extends javax.swing.JFrame {
     String[] Cabecera = {"idProducto", "nombre", "descripcion", "precio", "stock"};
     DefaultTableModel DTM;
     TableRowSorter<DefaultTableModel> Filtro;
+    producto p;
     int id_productoSelec;
     usuario usuario;
     String T;
@@ -343,9 +344,10 @@ public class CrudProductos extends javax.swing.JFrame {
         switch (respuesta) {
             case 0:
                 if (daoP.comprobarToken(T)) {
-                    if (!txtStock.getText().isEmpty() && txtStock.getText().matches("\\d+")) {
-                        int stock = Integer.parseInt(txtStock.getText());                        
-                        daoP.actualizarStock(id_productoSelec, "entrada", stock, usuario.getUCdusuario(), "ninguna");
+                    if (p != null) {
+                        //int stock = Integer.parseInt(txtStock.getText());
+                        new addStock(daoP, usuario, p,this).setVisible(true);
+                        //daoP.actualizarStock(id_productoSelec, "entrada", stock, usuario.getUCdusuario(), "ninguna");
                         ObtenerProductos();
                     } else {
                         JOptionPane.showMessageDialog(null, "Por favor ingrese un número válido en el campo Stock");
@@ -415,37 +417,6 @@ public class CrudProductos extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_regresarMouseClicked
 
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(CrudProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(CrudProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(CrudProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(CrudProductos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new CrudProductos().setVisible(true);
-//            }
-//        });
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Actualizar;
@@ -472,7 +443,7 @@ public class CrudProductos extends javax.swing.JFrame {
     private javax.swing.JTextField txtStock;
     // End of variables declaration//GEN-END:variables
 
-    private void ObtenerProductos() {
+    public void ObtenerProductos() {
         try {
             Lista = daoP.obtenerProductos();
             DTM = new DefaultTableModel(null, Cabecera);
@@ -522,6 +493,7 @@ public class CrudProductos extends javax.swing.JFrame {
         txtDes.setText(TablaProductos.getValueAt(filaSeleccionada, 2).toString());
         txtPrecio.setText(TablaProductos.getValueAt(filaSeleccionada, 3).toString());
         txtStock.setText(TablaProductos.getValueAt(filaSeleccionada, 4).toString());
+        p = new producto(id_productoSelec, txtNombre.getText(), txtDes.getText(), Float.parseFloat(txtPrecio.getText()), Integer.parseInt(txtStock.getText()));
     }
 
     private void Filtrar() {

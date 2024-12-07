@@ -182,28 +182,28 @@ public class frmPago extends javax.swing.JFrame {
             pg.setTipo("Tarjeta");
             
         pg.setDescripcion("Venta");
-        String[] opciones = {"Boleta", "Factura", "Ninguno"};
-        int respuesta = JOptionPane.showOptionDialog(this,"¿Qué desea descargar?","Descargar Documento",JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                opciones,
-                opciones[0]
-        );
-
-        switch (respuesta) {
-            case 0:
-                System.out.println("Seleccionó Boleta ");
-                break;
-            case 1:
-                System.out.println("Seleccionó Factura");
-                break;
-            case 2:
-                System.out.println("Seleccionó Ninguno" );
-                break;
-            default:
-                System.out.println("No seleccionó ninguna opción");
-                break;
-        }
+//        String[] opciones = {"Boleta", "Factura", "Ninguno"};
+//        int respuesta = JOptionPane.showOptionDialog(this,"¿Qué desea descargar?","Descargar Documento",JOptionPane.DEFAULT_OPTION,
+//                JOptionPane.QUESTION_MESSAGE,
+//                null,
+//                opciones,
+//                opciones[0]
+//        );
+//
+//        switch (respuesta) {
+//            case 0:
+//                System.out.println("Seleccionó Boleta ");
+//                break;
+//            case 1:
+//                System.out.println("Seleccionó Factura");
+//                break;
+//            case 2:
+//                System.out.println("Seleccionó Ninguno" );
+//                break;
+//            default:
+//                System.out.println("No seleccionó ninguna opción");
+//                break;
+//        }
         
         boolean resultado = daov.Comprobante(cm, pg);
         dispose();

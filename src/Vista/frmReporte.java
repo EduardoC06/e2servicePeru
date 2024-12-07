@@ -1,6 +1,7 @@
 package Vista;
 
 import Clases.movimiento;
+import Clases.movimientoPDF;
 import Clases.usuario;
 import DAO.DAOreporte;
 import java.awt.event.MouseAdapter;
@@ -15,7 +16,7 @@ import javax.swing.table.TableRowSorter;
 public class frmReporte extends javax.swing.JFrame {
 
     DAOreporte daor = new DAOreporte();
-    List<movimiento> ListaMovimientos = new LinkedList();
+    List<movimiento> ListaMovimientos;
     String[] Cabecera = {"id_movimiento", "producto", "usuario", "tipo_movimiento", "cantidad", "fecha_movimiento", "observaciones"};
     DefaultTableModel DTM;
     TableRowSorter<DefaultTableModel> Filtro;
@@ -27,7 +28,7 @@ public class frmReporte extends javax.swing.JFrame {
             initComponents();
             this.u = u;
             this.T = T;
-            Mostrarmovimientos();
+            Mostrarmovimientos("todo");
             setLocationRelativeTo(null);
             cargarResultados("todo");
         } else {
@@ -35,9 +36,9 @@ public class frmReporte extends javax.swing.JFrame {
         }
     }
 
-    private void Mostrarmovimientos() {
+    private void Mostrarmovimientos(String filtro) {
         try {
-            ListaMovimientos = daor.ObtenerMovimientos();
+            ListaMovimientos = daor.ObtenerMovimientos(filtro);
             DTM = new DefaultTableModel(null, Cabecera);
             for (movimiento C : ListaMovimientos) {
                 DTM.addRow(C.Convertir());
@@ -75,11 +76,12 @@ public class frmReporte extends javax.swing.JFrame {
         jPanel6 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        opcM = new javax.swing.JComboBox<>();
         txtBuscar = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableMovimientos = new javax.swing.JTable();
         regresar = new javax.swing.JLabel();
+        btnDescargar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -225,7 +227,12 @@ public class frmReporte extends javax.swing.JFrame {
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
         jLabel11.setText("Ordenar por");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        opcM.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todo ", "Dia", "Semana", "Mes" }));
+        opcM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                opcMActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -237,7 +244,7 @@ public class frmReporte extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel11)
                 .addGap(18, 18, 18)
-                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(opcM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
         jPanel6Layout.setVerticalGroup(
@@ -247,7 +254,7 @@ public class frmReporte extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(jLabel11)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(opcM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -284,6 +291,13 @@ public class frmReporte extends javax.swing.JFrame {
             }
         });
 
+        btnDescargar.setText("Descargar PDF");
+        btnDescargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescargarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -297,8 +311,16 @@ public class frmReporte extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1)
                         .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnDescargar)
+                                .addGap(15, 15, 15))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(opcFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -311,12 +333,7 @@ public class frmReporte extends javax.swing.JFrame {
                                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(20, 20, 20))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(20, 20, 20))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -337,7 +354,9 @@ public class frmReporte extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDescargar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -384,6 +403,29 @@ public class frmReporte extends javax.swing.JFrame {
         txtBuscar.setText(null);
     }//GEN-LAST:event_txtBuscarMouseClicked
 
+    private void btnDescargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescargarActionPerformed
+        movimientoPDF pd = new movimientoPDF();
+        try {
+            pd.prueba(u, ListaMovimientos, lbventa.getText());
+            JOptionPane.showMessageDialog(this, "Reporte generado exitosamente.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al generar el reporte: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnDescargarActionPerformed
+
+    private void opcMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opcMActionPerformed
+        int filtro = opcM.getSelectedIndex();
+        if (filtro == 0) {
+            Mostrarmovimientos("todo");
+        } else if (filtro == 1) {
+            Mostrarmovimientos("1dia");
+        } else if (filtro == 2) {
+            Mostrarmovimientos("1semana");
+        } else if (filtro == 3) {
+            Mostrarmovimientos("1mes");
+        }
+    }//GEN-LAST:event_opcMActionPerformed
+
     private void cargarResultados(String filtroT) {
 
         LinkedList<Double> lista = daor.obtenerReporte(filtroT);
@@ -396,7 +438,8 @@ public class frmReporte extends javax.swing.JFrame {
             lbclientes.setText(" " + lista.get(3));
         }
     }
-
+    
+    
     public void Configuracion() {
         tableMovimientos.getColumnModel().getColumn(0).setMaxWidth(0);
         tableMovimientos.getColumnModel().getColumn(0).setMinWidth(0);
@@ -423,7 +466,7 @@ public class frmReporte extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JButton btnDescargar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -443,6 +486,7 @@ public class frmReporte extends javax.swing.JFrame {
     private javax.swing.JLabel lbclientes;
     private javax.swing.JLabel lbventa;
     private javax.swing.JComboBox<String> opcFiltro;
+    private javax.swing.JComboBox<String> opcM;
     private javax.swing.JLabel regresar;
     private javax.swing.JTable tableMovimientos;
     private javax.swing.JTextField txtBuscar;

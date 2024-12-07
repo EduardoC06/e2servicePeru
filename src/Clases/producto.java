@@ -9,7 +9,7 @@ public class producto {
     private double precio;
     private int stock;
 
-    // Constructor
+    
     public producto(int idProducto, String nombre, String descripcion, double precio, int stock) {
         this.idProducto = idProducto;
         this.nombre = nombre;
